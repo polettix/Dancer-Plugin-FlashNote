@@ -1,7 +1,7 @@
 use Test::More tests => 1;
 
 BEGIN {
-   use_ok('Dancer::Plugin::Flash');
+   use_ok('Dancer::Plugin::FlashNote');
 }
 
-diag("Testing Dancer::Plugin::Flash $Dancer::Plugin::Flash::VERSION");
+diag("Testing Dancer::Plugin::FlashNote $Dancer::Plugin::FlashNote::VERSION");
