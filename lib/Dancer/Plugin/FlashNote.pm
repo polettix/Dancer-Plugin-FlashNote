@@ -9,12 +9,19 @@ use Carp;
 use Dancer ':syntax';
 use Dancer::Plugin;
 
-my $conf             = plugin_setting;
-my $token_name       = $conf->{token_name} || 'flash';
+my $conf = plugin_setting;
+
+my %is_allowed_setting = map { $_ => 1 }
+  qw( token_name session_hash_key queue arguments dequeue );
+if (my @extra = grep { !$is_allowed_setting{$_} } keys %$conf) {
+   croak __PACKAGE__ . ": invalid configuration keys (@extra)";
+}
+
+my $token_name       = $conf->{token_name}       || 'flash';
 my $session_hash_key = $conf->{session_hash_key} || '_flash';
-my $queue            = $conf->{queue} || 'multiple';
-my $arguments        = $conf->{arguments} || 'join';
-my $dequeue          = $conf->{dequeue} || 'when_used';
+my $queue            = $conf->{queue}            || 'multiple';
+my $arguments        = $conf->{arguments}        || 'join';
+my $dequeue          = $conf->{dequeue}          || 'when_used';
 
 $arguments =~ m{\A(?: single | join | auto | array )\z}mxs
   or croak "invalid arguments setting '$arguments'";
@@ -107,11 +114,11 @@ my $template_sub = {
                }
                return $cache;
             };
-         } keys %$flash,
+           } keys %$flash,
       };
    },
-}->{$dequeue}
-or croak "invalid dequeuing style '$dequeue'";
+  }->{$dequeue}
+  or croak "invalid dequeuing style '$dequeue'";
 before_template $template_sub;
 
 register flash_flush => sub {
