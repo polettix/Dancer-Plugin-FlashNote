@@ -334,12 +334,13 @@ style and display the messages.
 
 =head1 CONFIGURATION
 
-With no configuration whatsoever, the plugin will work fine, thus contributing
-to the I<keep it simple> motto of Dancer.
+Configurations are read only when the module is loaded, so take care
+to place them in a configuration file or before C<use>-ing the module.
 
 =head2 Configuration Default Values
 
-These are the default values. See below for a description of the keys
+The module works also without configurations, the following sample
+configuration includes all the default values:
 
   plugins:
     Flash:
@@ -348,6 +349,8 @@ These are the default values. See below for a description of the keys
       queue:            key_single
       arguments:        join
       dequeue:          by_key
+
+See the following section for an explanation of the keys.
 
 =head2 Options
 
