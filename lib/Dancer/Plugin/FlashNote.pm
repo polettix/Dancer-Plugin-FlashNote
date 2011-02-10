@@ -20,7 +20,7 @@ if (my @extra = grep { !$is_allowed_setting{$_} } keys %$conf) {
 my $token_name       = $conf->{token_name}       || 'flash';
 my $session_hash_key = $conf->{session_hash_key} || '_flash';
 my $queue            = $conf->{queue}            || 'multiple';
-my $arguments        = $conf->{arguments}        || 'join';
+my $arguments        = $conf->{arguments}        || 'auto';
 my $dequeue          = $conf->{dequeue}          || 'when_used';
 
 $arguments =~ m{\A(?: single | join | auto | array )\z}mxs
@@ -144,7 +144,7 @@ __END__
 
 =pod
 
-=head1 SYNOPSYS
+=head1 SYNOPSIS
 
    # In the configuration you choose a "flash style", e.g.
    # notifications stored in an array and automatically
@@ -193,7 +193,7 @@ have to take care to find a suitable place to put the messages.
 
 =head2 Dancer::Plugin::FlashMessage
 
-This plugin started from L<Dancer::Plugin::FlashMessage> by
+This plugin originages from L<Dancer::Plugin::FlashMessage> by
 Damien "dams" Krotkine. While I appreciated the idea and the implementation,
 I felt that the way of use did not fit my needs and after some discussion
 we decided to go for different modules: he would retain only the one
@@ -206,14 +206,16 @@ L<Dancer::Plugin::FlashMessage>:
 
   plugins:
     Flash:
-      token_name:       flash
-      session_hash_key: _flash
-      queue:            key_single
-      arguments:        join
-      dequeue:          by_key
+      queue:     key_single
+      arguments: single
+      dequeue:   by_key
 
 but if you need it you can probably stick to L<Dancer::Plugin::FlashMessage>.
-
+Also note that with the configuration above the C<flash()> function will
+not work in the same way as L<Dancer::Plugin::FlashMessage> when called
+with only one parameter: in dams' module this kind of call deletes the
+value associated to the key, in this module this just pushes an undef
+message.
 
 =head2 Styles
 
@@ -230,7 +232,7 @@ has little needs. In this case, all you probably need is some way to
 generate a notification message in your application and get it written
 somewhere in the page:
 
-   flash 'hey mate, you made an error! Check your inputs'   
+   flash 'hey mate, you made an error! Check your inputs'
       unless params_are_ok();
 
 =item *
@@ -252,22 +254,21 @@ template or a string, and provide the parameters:
    # In the controller
    my $value = params->{id};
    flash value_not_allowed => id => $value;
-   
+
    # In the template, probably the layout
-   <% 
-      FOR notification = flash;
-         type = notification.0;
-         INCLUDE "flash/$lang/$type.tt", notification = notification;
-      END;   
+   <%
+      FOR note = flash;
+         type = note.0;
+         INCLUDE "flash/$lang/$type.tt", note = note;
+      END;
    %>
 
    # flash/en/value_not_allowed.tt
-   The [% notification.1 %] value '[% notification.2 | html %]' is not
-   allowed
+   The [% note.1 %] value '[% note.2 | html %]' is not allowed
 
    # flash/it/value_not_allowed.tt
-   Il parametro [% notification.1 %] non ammette
-   il valore '[% notification.2 | html %]'
+   Il parametro [% note.1 %] non ammette il
+   valore '[% note.2 | html %]'
 
 =item *
 
@@ -286,12 +287,14 @@ The different needs addressed by this module deal with three areas:
 =item *
 
 how flash messages are queued for later usage from the template. This
-can be decided through the C<queue> configuration, and changes the way
-you use the C<flash()> function;
+can be decided through the C<queue> configuration, and changes the
+semantics of the C<flash()> function and how its parameters are
+used;
 
 =item *
 
-how multiple parameters to a call to the C<flash()> function are handled;
+how multiple parameters to any single call to the C<flash()> function
+are handled;
 
 =item *
 
@@ -320,8 +323,8 @@ are flushed away after they get the occasion to be displayed.
 
 This method inserts a flash message in the cache. What it puts inside and in
 what manner depends on the queueing method, see below L</Queueing Styles>. By
-default, it accepts one or more parameters, which are joined together and
-queued inside an array.
+default, it accepts one or more parameters and they are queued inside an
+array as a scalar (in case of one parameter) or as an array reference.
 
 The method always returns the provided message.
 
@@ -341,7 +344,7 @@ style and display the messages.
 
 =head1 CONFIGURATION
 
-Configurations are read only when the module is loaded, so take care
+Configurations are used only when the module is loaded, so take care
 to place them in a configuration file or before C<use>-ing the module.
 
 =head2 Configuration Default Values
@@ -353,9 +356,9 @@ configuration includes all the default values:
     Flash:
       token_name:       flash
       session_hash_key: _flash
-      queue:            key_single
-      arguments:        join
-      dequeue:          by_key
+      queue:            multiple
+      arguments:        auto
+      dequeue:          when_used
 
 See the following section for an explanation of the keys.
 
@@ -399,7 +402,7 @@ key_multiple
 
 =back
 
-See L</Queueing Styles> below for the details. B<Default>: C<key_single>.
+See L</Queueing Styles> below for the details. B<Default>: C<multiple>.
 
 =item arguments
 
@@ -426,7 +429,7 @@ array
 
 =back
 
-See L</Multiple Parameters> below for the details. B<Default>: C<join>.
+See L</Multiple Parameters> below for the details. B<Default>: C<auto>.
 
 =item dequeue
 
@@ -452,7 +455,7 @@ by_key
 
 =back
 
-See L</Dequeueing Styles> below for the details. B<Default>: C<by_key>.
+See L</Dequeueing Styles> below for the details. B<Default>: C<when_used>.
 
 =back
 
@@ -557,11 +560,11 @@ arrays, each containing the full queue for the particular key:
 
 =back
 
-The default queueing style is I<when_used>.
+The default queueing style is I<multiple>.
 
 =head2 Multiple Parameters
 
-The queueing style is not the entire story, anyway. If you provide more 
+The queueing style is not the entire story, anyway. If you provide more
 parameters after
 the C<$message>, this and all the following parameters are put in an anonymous
 array and this is set as the new C<$message>. Assuming the C<simple> queueing
@@ -579,7 +582,7 @@ translations of your templates. Consider the case that you have a parameter in a
 form that does not pass the validation, and you want to flash a message about it;
 the simplest case is to use this:
 
-   flash "you have an error in the email parameter: '$input' is not valid"
+   flash "error in the email parameter: '$input' is not valid"
 
 but this ties you to English. On the other hand, you could call:
 
@@ -587,11 +590,11 @@ but this ties you to English. On the other hand, you could call:
 
 and then, in the template, put something like this:
 
-   you have an error in the <% flash.0 %> parameter: '<% flash.1 %>' is not valid
+   error in the <% flash.0 %> parameter: '<% flash.1 %>' is not valid
 
 which lets you handle translations easily, e.g.:
 
-   errore nel parametro <% flash.0 %>: '<% flash.1 %>' non risulta valido
+   errore nel parametro <% flash.0 %>: '<% flash.1 %>' non valido
 
 If you choose to use this, you might find the C<arguments> configuration handy.
 Assuming the C<multiple> queueing style and the following calls in the code:
@@ -627,7 +630,7 @@ example, you get this in the template:
 
 this auto-selects the best option, i.e. it puts the single argument as-is if there
 is only one, otherwise generates an anonymous array with all of them. In the
-template:
+template you get:
 
    flash => [
       'whatever',
@@ -647,7 +650,7 @@ parameters, because you always get the same structure in the template:
 
 =back
 
-The default handling style is I<join>.
+The default handling style is I<auto>.
 
 =head2 Dequeueing Styles
 
@@ -659,8 +662,8 @@ session with the C<dequeue> parameter, with the following possibilities:
 
 =item B<< never >>
 
-items are never deleted automatically, but will be flushed by the code in some
-other way by calling C<flash_flush()>;
+items are never deleted automatically, but they will be flushed in the code
+by calling C<flash_flush()>;
 
 =item B<< always >>
 
@@ -674,8 +677,9 @@ items are all deleted when any of them is used in some way from the template. Th
 underlying semantics here is that if you get the chance to show a flash message
 in the template, you can show them all so they are removed from the session. If
 for some reason you don't get this chance (e.g. because you are returning a
-redirection, and the template rendering will happen in the next call) the messages
-are kept in the session;
+redirection, and the template rendering will happen in the next call) the
+messages are kept in the session so that you can display them at the next
+call that actually makes use of a template;
 
 =item B<< by_key >>
 
@@ -685,15 +689,15 @@ the unused ones are kept in the session for usage at some later call.
 
 =back
 
-The default dequeuing style is C<by_key>, consistently with the previous implementation
-of this module.
+The default dequeuing style is I<when_used>.
 
 
 =head1 SEE ALSO
 
 This module started from L<Dancer::Plugin::FlashMessage>, which is an
-excellent module if its flash message style suits to your needs.
+excellent module if its flash message style suits to your needs. You surely
+recognised that some small parts of this documentation come from there.
 
-And L<Dancer>, of course.
+And L<Dancer>, of course!
 
 =cut
