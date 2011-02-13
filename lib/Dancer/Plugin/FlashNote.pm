@@ -691,8 +691,19 @@ the unused ones are kept in the session for usage at some later call.
 
 The default dequeuing style is I<when_used>.
 
+=head1 DEPENDENCIES
+
+Only L<Dancer> and the bundled module L<Dancer::Plugin>.
+
+=head1 BUGS AND LIMITATIONS
+
+Curious about active bugs or want to report one? The bug tracking system
+can be found at L<https://rt.cpan.org/Public/Dist/Display.html?Name=Dancer-Plugin-FlashNote>.
 
 =head1 SEE ALSO
+
+If you want to contribute, check this module out in GitHub at
+L<https://github.com/polettix/Dancer-Plugin-FlashNote>.
 
 This module started from L<Dancer::Plugin::FlashMessage>, which is an
 excellent module if its flash message style suits to your needs. You surely
