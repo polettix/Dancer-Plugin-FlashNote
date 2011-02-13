@@ -44,14 +44,11 @@ SYNOPSIS
 ALL THE REST
 ============
 
-Want to know more? See the module’s documentation at
-http://search.cpan.org/perldoc?Dancer::Plugin::FlashNote to figure out
+Want to know more? [See the module’s documentation](http://search.cpan.org/perldoc?Dancer::Plugin::FlashNote) to figure out
 all the bells and whistles of this module!
 
-Want to install the latest release? Go fetch it on CPAN at
-http://search.cpan.org/dist/Dancer-Plugin-FlashNote/ .
+Want to install the latest release? [Go fetch it on CPAN](http://search.cpan.org/dist/Dancer-Plugin-FlashNote/).
 
-Want to contribute? Fork it on GitHub at
-https://github.com/polettix/Dancer-Plugin-FlashNote .
+Want to contribute? [Fork it on GitHub](https://github.com/polettix/Dancer-Plugin-FlashNote).
 
 That’s all folks!
