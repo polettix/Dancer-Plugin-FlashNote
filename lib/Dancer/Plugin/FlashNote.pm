@@ -558,6 +558,26 @@ arrays, each containing the full queue for the particular key:
       ],
    }
 
+In your template:
+
+   <% IF flash %>
+      <ul class="messages">
+      <% FOR message = flash.pairs %>
+        <% FOR text = message.value %>
+         <li class="[% msg.key | html %]"><% text | html %></li>
+        <% END %>
+      <% END %>
+      </ul>
+   <% END %>
+
+Becomes:
+
+    <ul class="messages">
+        <li class="error">you made an error...</li>
+        <li class="warning">beware!</li>
+        <li class="warning">ouch!</li>
+    </ul>
+
 =back
 
 The default queueing style is I<multiple>.
