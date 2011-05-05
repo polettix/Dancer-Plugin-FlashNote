@@ -150,7 +150,7 @@ __END__
    # notifications stored in an array and automatically
    # removed from the session when used
    plugins:
-      Flash:
+      FlashNote:
          queue:   multiple
          dequeue: when_used
 
@@ -205,7 +205,7 @@ This configuration should give you a behaviour equivalent to
 L<Dancer::Plugin::FlashMessage>:
 
   plugins:
-    Flash:
+    FlashNote:
       queue:     key_single
       arguments: single
       dequeue:   by_key
@@ -353,7 +353,7 @@ The module works also without configurations, the following sample
 configuration includes all the default values:
 
   plugins:
-    Flash:
+    FlashNote:
       token_name:       flash
       session_hash_key: _flash
       queue:            multiple
