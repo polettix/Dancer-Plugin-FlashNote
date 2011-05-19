@@ -564,7 +564,7 @@ In your template:
       <ul class="messages">
       <% FOR message = flash.pairs %>
         <% FOR text = message.value %>
-         <li class="[% msg.key | html %]"><% text | html %></li>
+         <li class="[% message.key | html %]"><% text | html %></li>
         <% END %>
       <% END %>
       </ul>
