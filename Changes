@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+1.0.1     2011-05-20 02:02:38 Europe/Rome
    - fixed bugs in documentation (thanks to Tom Heady)
      solves https://rt.cpan.org/Public/Bug/Display.html?id=68323
 
