@@ -8,8 +8,9 @@ plan tests => 16;
 
 use Dancer ':syntax';
 use Dancer::Test;
+use File::Spec::Functions qw( rel2abs );
 
-setting views   => path(qw( t views ));
+setting views => rel2abs(path(qw( t views )));
 setting plugins => {
    FlashNote => {
       queue   => 'single',
