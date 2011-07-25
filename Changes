@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+1.0.2     2011-07-26 00:53:49 Europe/Rome
    - worked around bug in Dancer 1.3070
 
 1.0.1     2011-05-20 02:02:38 Europe/Rome
