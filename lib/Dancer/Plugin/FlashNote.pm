@@ -119,7 +119,7 @@ my $template_sub = {
    },
   }->{$dequeue}
   or croak "invalid dequeuing style '$dequeue'";
-before_template $template_sub;
+hook before_template $template_sub;
 
 register flash_flush => sub {
    my $flash = session $session_hash_key;
