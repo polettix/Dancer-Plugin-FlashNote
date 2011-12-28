@@ -1,4 +1,7 @@
 {{$NEXT}}
+   - change deprecated "before_template" to "hook before_template" (thanks to Tom Heady)
+     merges https://github.com/polettix/Dancer-Plugin-FlashNote/pull/2
+   - change deprecated "after" to "hook after"
 
 1.0.2     2011-07-26 00:53:49 Europe/Rome
    - worked around bug in Dancer 1.3070

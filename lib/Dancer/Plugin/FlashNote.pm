@@ -78,7 +78,7 @@ if ($dequeue eq 'by_key' and $queue !~ m{\Akey_}mxs) {
      . "with 'key_*' queueing styles";
 }
 if ($dequeue eq 'always') {
-   after sub {
+   hook after => sub {
       session $session_hash_key, undef;
    };
 }
