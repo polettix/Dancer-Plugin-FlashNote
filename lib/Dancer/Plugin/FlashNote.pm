@@ -119,7 +119,7 @@ my $template_sub = {
    },
   }->{$dequeue}
   or croak "invalid dequeuing style '$dequeue'";
-before_template $template_sub;
+hook before_template => $template_sub;
 
 register flash_flush => sub {
    my $flash = session $session_hash_key;
@@ -150,7 +150,7 @@ __END__
    # notifications stored in an array and automatically
    # removed from the session when used
    plugins:
-      Flash:
+      FlashNote:
          queue:   multiple
          dequeue: when_used
 
@@ -205,7 +205,7 @@ This configuration should give you a behaviour equivalent to
 L<Dancer::Plugin::FlashMessage>:
 
   plugins:
-    Flash:
+    FlashNote:
       queue:     key_single
       arguments: single
       dequeue:   by_key
@@ -353,7 +353,7 @@ The module works also without configurations, the following sample
 configuration includes all the default values:
 
   plugins:
-    Flash:
+    FlashNote:
       token_name:       flash
       session_hash_key: _flash
       queue:            multiple
@@ -557,6 +557,26 @@ arrays, each containing the full queue for the particular key:
          'ouch!'
       ],
    }
+
+In your template:
+
+   <% IF flash %>
+      <ul class="messages">
+      <% FOR message = flash.pairs %>
+        <% FOR text = message.value %>
+         <li class="[% message.key | html %]"><% text | html %></li>
+        <% END %>
+      <% END %>
+      </ul>
+   <% END %>
+
+Becomes:
+
+    <ul class="messages">
+        <li class="error">you made an error...</li>
+        <li class="warning">beware!</li>
+        <li class="warning">ouch!</li>
+    </ul>
 
 =back
 

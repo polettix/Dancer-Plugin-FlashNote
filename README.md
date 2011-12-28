@@ -11,7 +11,7 @@ SYNOPSIS
     # notifications stored in an array and automatically
     # removed from the session when used
     plugins:
-       Flash:
+       FlashNote:
           queue:   multiple
           dequeue: when_used
 
