@@ -46,6 +46,7 @@ elsif ($queue eq 'multiple') {
       my $flash = session($session_hash_key);
       session($session_hash_key, $flash = []) unless $flash;
       push @$flash, $value;
+      session($session_hash_key, $flash);
       return $value;
    };
 } ## end elsif ($queue eq 'multiple')
@@ -56,6 +57,7 @@ elsif ($queue eq 'key_single') {
       my $flash = session($session_hash_key);
       session($session_hash_key, $flash = {}) unless $flash;
       $flash->{$key} = $value;
+      session($session_hash_key, $flash);
       return $value;
    };
 } ## end elsif ($queue eq 'key_single')
@@ -66,6 +68,7 @@ elsif ($queue eq 'key_multiple') {
       my $flash = session($session_hash_key);
       session($session_hash_key, $flash = {}) unless $flash;
       push @{$flash->{$key}}, $value;
+      session($session_hash_key, $flash);
       return $value;
    };
 } ## end elsif ($queue eq 'key_multiple')
@@ -111,6 +114,7 @@ my $template_sub = {
             $key => sub {
                if (!$cache) {
                   $cache = delete $flash->{$key};
+                  session($session_hash_key, $flash);
                }
                return $cache;
             };
