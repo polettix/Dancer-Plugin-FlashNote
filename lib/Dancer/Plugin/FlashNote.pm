@@ -43,9 +43,9 @@ if ($queue eq 'single') {
 elsif ($queue eq 'multiple') {
    register flash => sub {
       my $value = _get_parameters(@_);
-      my $flash = session($session_hash_key);
-      session($session_hash_key, $flash = []) unless $flash;
+      my $flash = session($session_hash_key) || [];
       push @$flash, $value;
+      session($session_hash_key, $flash);
       return $value;
    };
 } ## end elsif ($queue eq 'multiple')
@@ -53,9 +53,9 @@ elsif ($queue eq 'key_single') {
    register flash => sub {
       my $key   = shift;
       my $value = _get_parameters(@_);
-      my $flash = session($session_hash_key);
-      session($session_hash_key, $flash = {}) unless $flash;
+      my $flash = session($session_hash_key) || {};
       $flash->{$key} = $value;
+      session($session_hash_key, $flash);
       return $value;
    };
 } ## end elsif ($queue eq 'key_single')
@@ -63,9 +63,9 @@ elsif ($queue eq 'key_multiple') {
    register flash => sub {
       my $key   = shift;
       my $value = _get_parameters(@_);
-      my $flash = session($session_hash_key);
-      session($session_hash_key, $flash = {}) unless $flash;
+      my $flash = session($session_hash_key) || {};
       push @{$flash->{$key}}, $value;
+      session($session_hash_key, $flash);
       return $value;
    };
 } ## end elsif ($queue eq 'key_multiple')

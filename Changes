@@ -1,4 +1,5 @@
 {{$NEXT}}
+   - fixed what appears to be a bug under Dancer::Session::Storable
 
 1.0.3     2011-12-28 09:49:27 Europe/Rome
    - change deprecated "before_template" to "hook before_template" (thanks to Tom Heady)
