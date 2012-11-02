@@ -111,6 +111,7 @@ my $template_sub = {
             $key => sub {
                if (!$cache) {
                   $cache = delete $flash->{$key};
+                  session($session_hash_key, $flash);
                }
                return $cache;
             };
